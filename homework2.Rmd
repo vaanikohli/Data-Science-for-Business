@@ -3,10 +3,6 @@ title: "Homework 2"
 author: "VAANI KOHLI"
 date: "19-05-2023"
 output:
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
   html_document:
     theme: flatly
     highlight: zenburn
@@ -14,6 +10,10 @@ output:
     toc: yes
     toc_float: yes
     code_folding: show
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 ------------------------------------------------------------------------
@@ -364,34 +364,6 @@ ggplot(card_fraud, aes(x = is_fraud, y = distance_km)) + geom_boxplot() + labs(x
 
 There are many sources of data on how countries generate their electricity and their CO2 emissions. I would like you to create three graphs:
 
-## 1. A stacked area chart that shows how your own country generated its electricity since 2000.
-
-You will use
-
-`geom_area(colour="grey90", alpha = 0.5, position = "fill")`
-
-```{r}
-
-energy %>%
-  filter(country == "India" & year >= 2000) %>%
-  pivot_longer(cols = biofuel:wind, names_to = "fuel", values_to = "twh_generation") %>%
-  select(c('country', 'year', 'fuel', 'twh_generation')) %>%
-  mutate(twh_generation = ifelse(is.na(twh_generation), 0.0, twh_generation)) %>%
-  ggplot(aes(x = year, y = twh_generation, fill = fuel)) + geom_area(colour = "grey90", aplha = 0.6, position = "fill")
-
-```
-
-## 2. A scatter plot that looks at how CO2 per capita and GDP per capita are related
-
-```{r}
-co2_percap %>%
-  inner_join(gdp_percap, by = c('iso2c', 'iso3c', 'country', 'year')) %>%
-  select(c('iso2c', 'iso3c', 'country', 'year', 'GDPpercap', 'co2percap')) %>%
-  filter(year <= 2000) %>%
-  ggplot(aes(x = GDPpercap, y = co2percap)) + geom_point() 
-
-```
-
 ```{r}
 #| message: false
 #| warning: false
@@ -446,4 +418,24 @@ gdp_percap <- wb_data(country = "countries_only",
          GDPpercap = value)
 ```
 
-# 
+## 1. A stacked area chart that shows how your own country generated its electricity since 2000.
+
+```{r}
+energy %>%
+  filter(country == "India" & year >= 2000) %>%
+  pivot_longer(cols = biofuel:wind, names_to = "fuel", values_to = "twh_generation") %>%
+  select(c('country', 'year', 'fuel', 'twh_generation')) %>%
+  mutate(twh_generation = ifelse(is.na(twh_generation), 0.0, twh_generation)) %>%
+  ggplot(aes(x = year, y = twh_generation, fill = fuel)) + geom_area(colour = "grey90", alpha = 0.5, position = "fill")
+```
+
+## 2. A scatter plot that looks at how CO2 per capita and GDP per capita are related
+
+```{r}
+co2_percap %>%
+  inner_join(gdp_percap, by = c('iso2c', 'iso3c', 'country', 'year')) %>%
+  select(c('iso2c', 'iso3c', 'country', 'year', 'GDPpercap', 'co2percap')) %>%
+  filter(year <= 2000) %>%
+  ggplot(aes(x = GDPpercap, y = co2percap)) + geom_point() 
+
+```
